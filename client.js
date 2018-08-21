@@ -9,13 +9,14 @@ function add() {
 
     // Emit the new todo as some data to the server
     server.emit('make', {
-        titlé : input.value
+        title : input.value
     });
 
     // Clear the input
     input.value = '';
     // TODO: refocus the element
 }
+
 
 function render(todo) {
     console.log(todo);
@@ -27,6 +28,14 @@ function render(todo) {
 
 // NOTE: These are listeners for events from the server
 // This event is for (re)loading the entire list of todos from the server
+var loadFlag = 0;
 server.on('load', (todos) => {
-    todos.forEach((todo) => render(todo));
+  if(loadFlag === 0){
+      todos.forEach((todo) => render(todo));
+      loadFlag = 1;
+  }
+});
+
+server.on('new', (todo) => {
+     render(todo);
 });

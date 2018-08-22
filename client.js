@@ -22,6 +22,7 @@ function render(todo) {
     console.log(todo);
     const listItem = document.createElement('li');
     const listItemText = document.createTextNode(todo.title);
+    listItem.setAttribute("id" , todo.id );
     listItem.appendChild(listItemText);
     list.append(listItem);
 }

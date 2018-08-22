@@ -27,6 +27,14 @@ function remove( i ) {
 
 }
 
+function removeComplete( i ) {
+  //  Emit remove todo instruction to the server
+    server.emit('removeComplete', {
+        id : i
+    });
+
+}
+
 function complete( i ) {
   //  Emit remove todo instruction to the server
     server.emit('complete', {
@@ -68,7 +76,7 @@ function renderComplete(todo) {
   const removeItemButton = document.createElement('button');
   const removebuttonText = document.createTextNode("Delete");
   removeItemButton.appendChild(removebuttonText);
-  removeItemButton.setAttribute("onclick" , "remove("+todo.id+")" );
+  removeItemButton.setAttribute("onclick" , "removeComplete("+todo.id+")" );
 
 
   listItem.setAttribute("id" , todo.id );

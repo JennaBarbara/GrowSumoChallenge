@@ -63,6 +63,15 @@ server.on('connection', (client) => {
 
     });
 
+    client.on('removeComplete', (i) => {
+        var remTodo =  completedDB.map(function(t) { return t.id; }).indexOf(i.id);
+        if(remTodo >= 0 ){
+           completedDB.splice(remTodo, 1);
+           removeTodo(i.id);
+        }
+
+    });
+
    client.on('complete', (i) => {
      var remTodo =  DB.map(function(t) { return t.id; }).indexOf(i.id);
      if(remTodo >= 0 ){

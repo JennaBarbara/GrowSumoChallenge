@@ -1,5 +1,6 @@
 const server = require('socket.io')();
 const firstTodos = require('./data');
+const firstCompleted = require('./completed');
 const Todo = require('./todo');
 
 
@@ -14,6 +15,10 @@ const DB = firstTodos.map((t) => {
     return new Todo(title=t.title, id=IDtracker++ );
 });
 
+const completedDB = firstCompleted.map((t) => {
+    // Form new Todo objects
+    return new Todo(title=t.title, id=IDtracker++ );
+});
 
 
 
@@ -23,14 +28,18 @@ server.on('connection', (client) => {
 
     // Sends a message to the client to reload all todos
     const reloadTodos = () => {
-        server.emit('load', DB);
+        server.emit('load', DB, completedDB);
     }
     const addTodo = (t) => {
         server.emit('new', t);
     }
+    const completeTodo = (t) => {
+        server.emit('completeTodo', t);
+    }
     const removeTodo = (i) => {
         server.emit('removeTodo', i);
     }
+
 
     // Accepts when a client makes a new todo
     client.on('make', (t) => {
@@ -46,9 +55,7 @@ server.on('connection', (client) => {
     });
 
     client.on('remove', (i) => {
-
         var remTodo =  DB.map(function(t) { return t.id; }).indexOf(i.id);
-
         if(remTodo >= 0 ){
            DB.splice(remTodo, 1);
            removeTodo(i.id);
@@ -56,10 +63,20 @@ server.on('connection', (client) => {
 
     });
 
-    // Send the DB downstream on connect
-    reloadTodos();
-});
+   client.on('complete', (i) => {
+     var remTodo =  DB.map(function(t) { return t.id; }).indexOf(i.id);
+     if(remTodo >= 0 ){
+         completedDB.push(DB[remTodo]);
+         completeTodo(DB[remTodo]);
+         DB.splice(remTodo, 1);
 
+    }
+
+   });
+
+// Send the DB downstream on connect
+reloadTodos();
+});
 
 
 

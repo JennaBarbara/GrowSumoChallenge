@@ -1,5 +1,7 @@
 const server = io('http://localhost:3003/');
-const list = document.getElementById('todo-list');
+const todoList = document.getElementById('todo-list');
+
+const completedList = document.getElementById('completed-list');
 
 // NOTE: These are all our globally scoped functions for interacting with the server
 // This function adds a new todo from the input
@@ -25,23 +27,60 @@ function remove( i ) {
 
 }
 
+function complete( i ) {
+  //  Emit remove todo instruction to the server
+    server.emit('complete', {
+        id : i
+    });
 
-function render(todo) {
-    console.log(todo);
-    const listItem = document.createElement('li');
-    const listItemText = document.createTextNode(todo.title);
-    const removeItemButton = document.createElement('button');
-    const buttonText = document.createTextNode("remove");
-    listItem.setAttribute("id" , todo.id );
-    removeItemButton.setAttribute("onclick" , "remove("+todo.id+")" );
-    listItem.appendChild(listItemText);
-    removeItemButton.appendChild(buttonText);
-    listItem.append(removeItemButton);
-    list.append(listItem);
 }
 
 
-function unrender(id) {
+function renderTask(todo) {
+
+    const listItem = document.createElement('li');
+    const listItemText = document.createTextNode(todo.title);
+    //create remove button
+    const removeItemButton = document.createElement('button');
+    const removebuttonText = document.createTextNode("Delete");
+    removeItemButton.appendChild(removebuttonText);
+    removeItemButton.setAttribute("onclick" , "remove("+todo.id+")" );
+    //create complete button
+    const completeItemButton = document.createElement('button');
+    const completebuttonText = document.createTextNode("Complete");
+    completeItemButton.appendChild( completebuttonText );
+    completeItemButton.setAttribute("onclick" , "complete("+todo.id+")" );
+
+    listItem.setAttribute("id" , todo.id );
+    listItem.appendChild(listItemText);
+
+    listItem.append(removeItemButton);
+    listItem.append(completeItemButton);
+    todoList.append(listItem);
+}
+
+
+
+function renderComplete(todo) {
+  const listItem = document.createElement('li');
+  const listItemText = document.createTextNode(todo.title);
+  //create remove button
+  const removeItemButton = document.createElement('button');
+  const removebuttonText = document.createTextNode("Delete");
+  removeItemButton.appendChild(removebuttonText);
+  removeItemButton.setAttribute("onclick" , "remove("+todo.id+")" );
+
+
+  listItem.setAttribute("id" , todo.id );
+  listItem.appendChild(listItemText);
+  listItem.append(removeItemButton);
+
+  completedList.append(listItem);
+
+}
+
+
+function unrenderTask(id) {
     var removeTodo = document.getElementById(id);
     removeTodo.parentNode.removeChild(removeTodo);
     console.log("removed");
@@ -50,18 +89,27 @@ function unrender(id) {
 // NOTE: These are listeners for events from the server
 // This event is for (re)loading the entire list of todos from the server
 var loadFlag = 0;
-server.on('load', (todos) => {
+server.on('load', (todos, completed) => {
   if(loadFlag === 0){
-      todos.forEach((todo) => render(todo));
+      todos.forEach((todo) => renderTask(todo));
+      completed.forEach((complete) => renderComplete(complete));
       loadFlag = 1;
   }
 });
 
 server.on('new', (todo) => {
-     render(todo);
+     renderTask(todo);
 });
 
+server.on('completeTodo', (complete) => {
+     console.log('completeTodo');
+     unrenderTask(complete.id);
+     renderComplete(complete);
+});
 server.on('removeTodo', (id) => {
-     console.log("remove todo");
-     unrender(id);
+     console.log('removeTodo');
+     unrenderTask(id);
+});
+server.on('removeCompleted', (id) => {
+     unrenderTask(id);
 });

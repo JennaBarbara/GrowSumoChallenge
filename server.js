@@ -21,7 +21,6 @@ const completedDB = firstCompleted.map((t) => {
 });
 
 
-
 server.on('connection', (client) => {
 
 
@@ -38,6 +37,12 @@ server.on('connection', (client) => {
     }
     const removeTodo = (i) => {
         server.emit('removeTodo', i);
+    }
+    const removeAllTD = () => {
+        server.emit('removeAllTD');
+    }
+    const removeAllComp = () => {
+        server.emit('removeAllComp');
     }
 
 
@@ -79,9 +84,16 @@ server.on('connection', (client) => {
          completeTodo(DB[remTodo]);
          DB.splice(remTodo, 1);
 
-    }
-
-   });
+      }
+    });
+    client.on('removeAllTodos', () => {
+      DB.splice(0, DB.length);
+      removeAllTD();
+    });
+    client.on('removeAllCompleted', () => {
+      completedDB.splice(0, completedDB.length);
+      removeAllComp();
+    });
 
 // Send the DB downstream on connect
 reloadTodos();

@@ -1,6 +1,5 @@
 const server = io('http://localhost:3003/');
 const todoList = document.getElementById('todo-list');
-
 const completedList = document.getElementById('completed-list');
 
 // NOTE: These are all our globally scoped functions for interacting with the server
@@ -41,6 +40,17 @@ function complete( i ) {
         id : i
     });
 
+}
+
+function completeAllTodos() {
+  server.emit('completeAllTodos');
+}
+
+function removeAllTodos() {
+  server.emit('removeAllTodos');
+}
+function removeAllCompleted() {
+  server.emit('removeAllCompleted');
 }
 
 
@@ -94,6 +104,19 @@ function unrenderTask(id) {
     console.log("removed");
 }
 
+function removeAllTD() {
+  while(todoList.firstChild) {
+    todoList.removeChild(todoList.firstChild);
+  }
+}
+
+function removeAllComp() {
+  while(completedList.firstChild) {
+    completedList.removeChild(completedList.firstChild);
+  }
+
+}
+
 // NOTE: These are listeners for events from the server
 // This event is for (re)loading the entire list of todos from the server
 var loadFlag = 0;
@@ -120,4 +143,10 @@ server.on('removeTodo', (id) => {
 });
 server.on('removeCompleted', (id) => {
      unrenderTask(id);
+});
+server.on('removeAllTD', () => {
+     removeAllTD();
+});
+server.on('removeAllComp', () => {
+     removeAllComp();
 });

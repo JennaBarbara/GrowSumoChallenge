@@ -9,8 +9,11 @@
         <input id="todo-input" type="text" placeholder="Feed the cat" autofocus>
         <button type="button" onclick="add()">Make</button>
         <ul id="todo-list"></ul>
+        <button onclick="removeAllTodos()">Delete all To-do's</button>
+        <button onclick="completeAllTodos()">Complete all To-do's</button>
         <p>completed</p>
         <ul id="completed-list"></ul>
+        <button onclick="removeAllCompleted()">Delete all Completed Tasks</button>
     </body>
     <script src="client.js" async></script>
 </html>

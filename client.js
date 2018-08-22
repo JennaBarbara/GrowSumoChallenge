@@ -17,14 +17,34 @@ function add() {
     // TODO: refocus the element
 }
 
+function remove( i ) {
+  //  Emit remove todo instruction to the server
+    server.emit('remove', {
+        id : i
+    });
+
+}
+
 
 function render(todo) {
     console.log(todo);
     const listItem = document.createElement('li');
     const listItemText = document.createTextNode(todo.title);
+    const removeItemButton = document.createElement('button');
+    const buttonText = document.createTextNode("remove");
     listItem.setAttribute("id" , todo.id );
+    removeItemButton.setAttribute("onclick" , "remove("+todo.id+")" );
     listItem.appendChild(listItemText);
+    removeItemButton.appendChild(buttonText);
+    listItem.append(removeItemButton);
     list.append(listItem);
+}
+
+
+function unrender(id) {
+    var removeTodo = document.getElementById(id);
+    removeTodo.parentNode.removeChild(removeTodo);
+    console.log("removed");
 }
 
 // NOTE: These are listeners for events from the server
@@ -39,4 +59,9 @@ server.on('load', (todos) => {
 
 server.on('new', (todo) => {
      render(todo);
+});
+
+server.on('removeTodo', (id) => {
+     console.log("remove todo");
+     unrender(id);
 });

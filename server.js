@@ -44,6 +44,9 @@ server.on('connection', (client) => {
     const removeAllComp = () => {
         server.emit('removeAllComp');
     }
+    const completeAllTD = (C) => {
+        server.emit('completeAllTD', C);
+    }
 
 
     // Accepts when a client makes a new todo
@@ -94,6 +97,11 @@ server.on('connection', (client) => {
       completedDB.splice(0, completedDB.length);
       removeAllComp();
     });
+    client.on('completeAllTodos', () => {
+       completedDB.push.apply(DB);
+       completeAllTD(DB);
+       DB.splice(0, DB.length);
+     });
 
 // Send the DB downstream on connect
 reloadTodos();

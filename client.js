@@ -150,3 +150,7 @@ server.on('removeAllTD', () => {
 server.on('removeAllComp', () => {
      removeAllComp();
 });
+server.on('completeAllTD', (completed) => {
+   removeAllTD();
+   completed.forEach((complete) => renderComplete(complete));
+});

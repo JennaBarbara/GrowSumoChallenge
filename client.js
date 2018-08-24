@@ -12,10 +12,8 @@ function add() {
     server.emit('make', {
         title : input.value
     });
-
     // Clear the input
     input.value = '';
-
     document.getElementById('todo-input').focus();
 
 }
@@ -25,32 +23,33 @@ function remove( i ) {
     server.emit('remove', {
         id : i
     });
-
 }
 
 function removeComplete( i ) {
-  //  Emit remove todo instruction to the server
+  //  Emit remove complete task instruction to the server
     server.emit('removeComplete', {
         id : i
     });
-
 }
 
 function complete( i ) {
-  //  Emit remove todo instruction to the server
+  //  Emit complete todo instruction to the server
   server.emit('complete', {
       id : i
   });
 }
 
 function completeAllTodos() {
+  //  Emit complete all todos instruction to the server
   server.emit('completeAllTodos');
 }
 
 function removeAllTodos() {
+  //  Emit remove all todos instruction to the server
   server.emit('removeAllTodos');
 }
 function removeAllCompleted() {
+  //  Emit remove all complete tasks instruction to the server
   server.emit('removeAllCompleted');
 }
 
@@ -100,7 +99,6 @@ function renderComplete(todo) {
 
 }
 
-
 function unrenderTask(id) {
     var removeTodo = document.getElementById(id);
     removeTodo.parentNode.removeChild(removeTodo);
@@ -113,6 +111,7 @@ function removeAllTD() {
   }
 }
 
+//remove all completed tasks from the document
 function removeAllComp() {
   while(completedList.firstChild) {
     completedList.removeChild(completedList.firstChild);
@@ -122,6 +121,7 @@ function removeAllComp() {
 
 // NOTE: These are listeners for events from the server
 // This event is for (re)loading the entire list of todos from the server
+//loadFlag variable prevents the client from loading the full set of tasks more than once
 var loadFlag = 0;
 server.on('load', (todos, completed) => {
   if(loadFlag === 0){
@@ -140,19 +140,24 @@ server.on('completeTodo', (complete) => {
      unrenderTask(complete.id);
      renderComplete(complete);
 });
+
 server.on('removeTodo', (id) => {
      console.log('removeTodo');
      unrenderTask(id);
 });
+
 server.on('removeCompleted', (id) => {
      unrenderTask(id);
 });
+
 server.on('removeAllTD', () => {
      removeAllTD();
 });
+
 server.on('removeAllComp', () => {
      removeAllComp();
 });
+
 server.on('completeAllTD', (completed) => {
    removeAllTD();
    completed.forEach((complete) => renderComplete(complete));

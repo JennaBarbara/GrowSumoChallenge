@@ -64,11 +64,13 @@ function renderTask(todo) {
     const removebuttonText = document.createTextNode("Delete");
     removeItemButton.appendChild(removebuttonText);
     removeItemButton.setAttribute("onclick" , "remove("+todo.id+")" );
+
     //create complete button
     const completeItemButton = document.createElement('button');
     const completebuttonText = document.createTextNode("Complete");
     completeItemButton.appendChild( completebuttonText );
     completeItemButton.setAttribute("onclick" , "complete("+todo.id+")" );
+    completeItemButton.setAttribute("class" , "completeButton" );
 
     listItem.setAttribute("id" , todo.id );
     listItem.appendChild(listItemText);

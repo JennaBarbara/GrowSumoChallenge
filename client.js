@@ -7,7 +7,7 @@ const completedList = document.getElementById('completed-list');
 function add() {
     console.warn(event);
     const input = document.getElementById('todo-input');
-
+    //TODO add alert if string empty
     // Emit the new todo as some data to the server
     server.emit('make', {
         title : input.value
@@ -38,10 +38,9 @@ function removeComplete( i ) {
 
 function complete( i ) {
   //  Emit remove todo instruction to the server
-    server.emit('complete', {
-        id : i
-    });
-
+  server.emit('complete', {
+      id : i
+  });
 }
 
 function completeAllTodos() {
